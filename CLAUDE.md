@@ -56,6 +56,11 @@ The point of the project. Never add:
 - Forms read values from the page on submit (`formText` in `components/forms.ts`), not from React state, so autofill and AI browser agents that set values directly still work.
 - Every control has a visible or accessible label. Tests select by role and label, which keeps this honest.
 - Plain words. Say "customers and suppliers", not "business partners"; "books", not "general ledger", unless an accountant would expect it.
+- Colours, spacing, radii and shadows come from the tokens in `src/app/styles/tokens.css`, in both themes. Never write a raw colour in a component or another stylesheet.
+- Icons are inline SVG from `components/Icon.tsx`, marked decorative; the text beside them carries the meaning. No icon fonts, no image icons.
+- Every module is listed once, in `shell/nav.ts`. The sidebar, the breadcrumb and the command palette all read it; a new page is added there and in `App.tsx`.
+- Pages are built from `PageHeader`, `Card`, `StatCard`, `Badge` and `EmptyState`. A list with nothing in it shows an `EmptyState` that says what the list is for and offers the first step.
+- The theme and the sidebar's collapsed state are per-device preferences in localStorage, not in the data layer.
 
 ## Versions and the changelog
 

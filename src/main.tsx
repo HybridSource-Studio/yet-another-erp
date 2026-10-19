@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { App } from "./app/App";
 import { StoreContext } from "./app/store-context";
 import { NewerDataError, openStore } from "./data";
-import "./app/styles.css";
+import "./app/styles/index.css";
 
 const root = createRoot(document.getElementById("root")!);
 // During development, a hot reload of this module starts over with a fresh root.
