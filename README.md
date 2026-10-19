@@ -67,6 +67,10 @@ src/
     db.ts           IndexedDB layout (Dexie)
     store.ts        opens the database, seeds first-run data, assembles the API
   app/            the React UI; reaches data only through src/data
+    shell/          the frame: sidebar, top bar, command palette (Ctrl+K), nav model, theme
+    components/     building blocks: Icon (inline SVG), PageHeader, Card, StatCard, Badge, EmptyState
+    pages/          one file per screen
+    styles/         design tokens (light and dark), base, shell, components, tables and forms
 e2e/              browser tests
 docs/
   plan.md         goals, what "no SaaS" means, principles, data model, roadmap, risks

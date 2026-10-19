@@ -7,8 +7,10 @@ import {
   type Item,
   type ItemKind,
 } from "../../data";
+import { Card } from "../components/Card";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { errorMessage, formChecked, formText } from "../components/forms";
+import { PageHeader } from "../components/PageHeader";
 import { navigate } from "../router";
 import { useLive, useStore } from "../store-context";
 import { NotFound } from "./NotFound";
@@ -59,77 +61,104 @@ export function ItemForm({ item }: { item?: Item }) {
   }
 
   return (
-    <section>
-      <h1>{item ? item.name : "New item"}</h1>
-      <form onSubmit={onSubmit} className="stacked">
-        <label>
-          Name
-          <input name="name" required defaultValue={item?.name} />
-        </label>
-        <label>
-          SKU
-          <input name="sku" defaultValue={item?.sku} />
-        </label>
-        <label>
-          Kind
-          <select name="kind" defaultValue={item?.kind ?? "stock"}>
-            <option value="stock">Stock item (counted)</option>
-            <option value="service">Service (not counted)</option>
-          </select>
-        </label>
-        <label>
-          Unit
-          <input name="unit" placeholder="pcs" defaultValue={item?.unit} />
-        </label>
-        <label>
-          Sale price ({currency})
-          <input
-            name="salePrice"
-            inputMode="decimal"
-            defaultValue={moneyInputValue(item?.salePrice ?? null, currency)}
-          />
-        </label>
-        <label>
-          Cost price ({currency})
-          <input
-            name="costPrice"
-            inputMode="decimal"
-            defaultValue={moneyInputValue(item?.costPrice ?? null, currency)}
-          />
-        </label>
-        <label>
-          Tax rate
-          <select name="taxRateId" defaultValue={item?.taxRateId ?? ""}>
-            <option value="">None</option>
-            {taxRates.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Reorder point
-          <input
-            name="reorderPoint"
-            inputMode="decimal"
-            defaultValue={
-              item?.reorderPoint == null ? "" : formatQuantity(item.reorderPoint, "en-US")
-            }
-          />
-        </label>
-        {item && (
-          <label className="inline">
-            <input type="checkbox" name="archived" defaultChecked={item.archived} />
-            Archived (hidden from lists)
-          </label>
-        )}
-        <ErrorMessage message={error} />
-        <div className="actions">
-          <button type="submit">Save</button>
-          <a href="#/items">Cancel</a>
-        </div>
-      </form>
-    </section>
+    <>
+      <PageHeader
+        title={item ? item.name : "New item"}
+        description={item ? undefined : "A product you count, or a service you don't."}
+      />
+      <Card className="form-card">
+        <form onSubmit={onSubmit}>
+          <div className="form-section">
+            <h2>Details</h2>
+            <div className="fields">
+              <label className="field span-2">
+                Name
+                <input name="name" required defaultValue={item?.name} />
+              </label>
+              <label className="field">
+                SKU
+                <input name="sku" defaultValue={item?.sku} className="mono" />
+                <span className="field-help">Optional. Must be unique.</span>
+              </label>
+              <label className="field">
+                Kind
+                <select name="kind" defaultValue={item?.kind ?? "stock"}>
+                  <option value="stock">Stock item (counted)</option>
+                  <option value="service">Service (not counted)</option>
+                </select>
+              </label>
+              <label className="field">
+                Unit
+                <input name="unit" placeholder="pcs" defaultValue={item?.unit} />
+              </label>
+              <label className="field">
+                Reorder point
+                <input
+                  name="reorderPoint"
+                  inputMode="decimal"
+                  defaultValue={
+                    item?.reorderPoint == null ? "" : formatQuantity(item.reorderPoint, "en-US")
+                  }
+                />
+                <span className="field-help">Stock items only.</span>
+              </label>
+            </div>
+          </div>
+          <div className="form-section">
+            <h2>Pricing</h2>
+            <p className="subtle">In {currency}, the workspace currency.</p>
+            <div className="fields">
+              <label className="field">
+                Sale price ({currency})
+                <input
+                  name="salePrice"
+                  inputMode="decimal"
+                  defaultValue={moneyInputValue(item?.salePrice ?? null, currency)}
+                />
+              </label>
+              <label className="field">
+                Cost price ({currency})
+                <input
+                  name="costPrice"
+                  inputMode="decimal"
+                  defaultValue={moneyInputValue(item?.costPrice ?? null, currency)}
+                />
+                <span className="field-help">
+                  Used for cost of sales until stock costing arrives.
+                </span>
+              </label>
+              <label className="field">
+                Tax rate
+                <select name="taxRateId" defaultValue={item?.taxRateId ?? ""}>
+                  <option value="">None</option>
+                  {taxRates.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </div>
+          {item && (
+            <div className="form-section">
+              <label className="field inline">
+                <input type="checkbox" name="archived" defaultChecked={item.archived} />
+                Archived (hidden from lists and pickers)
+              </label>
+            </div>
+          )}
+          <ErrorMessage message={error} />
+          <div className="form-footer">
+            <button type="submit" className="button button-primary">
+              Save
+            </button>
+            <a href="#/items" className="button button-ghost">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </Card>
+    </>
   );
 }

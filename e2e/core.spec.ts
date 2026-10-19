@@ -9,7 +9,7 @@ test("add a customer and an item, then find them in their lists", async ({ page 
   await page.getByLabel("Supplier").check();
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("cell", { name: "Acme Ltd" })).toBeVisible();
-  await expect(page.getByRole("cell", { name: "Customer, Supplier" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: /Customer\s*Supplier/ })).toBeVisible();
 
   await page.getByRole("link", { name: "Items", exact: true }).click();
   await page.getByRole("link", { name: "New item" }).click();
@@ -52,6 +52,6 @@ test("makes no requests to any other host", async ({ page }) => {
   });
   await page.goto("./");
   await page.getByRole("link", { name: "Items", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Items" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Items", exact: true })).toBeVisible();
   expect(elsewhere).toEqual([]);
 });

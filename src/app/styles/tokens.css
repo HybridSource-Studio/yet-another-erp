@@ -1,0 +1,126 @@
+/* Design tokens. Every colour, radius, shadow and spacing step the app uses lives here, in light
+   and dark. Components never use raw colours. The system font stack keeps the app self-contained:
+   no fonts are fetched from anywhere. */
+
+:root {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+
+  --sidebar-width: 15rem;
+  --sidebar-collapsed: 4rem;
+  --topbar-height: 3.5rem;
+  --content-max: 76rem;
+
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --surface-hover: #f5f7fa;
+  --text: #121826;
+  --text-2: #4b5563;
+  --text-3: #8a94a6;
+  --line: #e4e7ec;
+  --line-strong: #cfd4dc;
+
+  --accent: #0e7c66;
+  --accent-hover: #0b6a57;
+  --accent-text: #ffffff;
+  --accent-soft: #e3f4ee;
+  --accent-soft-text: #0a6552;
+
+  --danger: #c92a2a;
+  --danger-soft: #fdecec;
+  --warning: #b45309;
+  --warning-soft: #fef3e2;
+  --success: #15803d;
+  --success-soft: #e6f6ec;
+  --info: #1d4ed8;
+  --info-soft: #e8efff;
+
+  --focus: 0 0 0 3px rgba(14, 124, 102, 0.3);
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 4px 12px -2px rgba(16, 24, 40, 0.1), 0 2px 4px rgba(16, 24, 40, 0.04);
+  --shadow-lg: 0 20px 48px -12px rgba(16, 24, 40, 0.28);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0c0f13;
+  --surface: #14181e;
+  --surface-2: #1b2129;
+  --surface-hover: #1e252e;
+  --text: #e8ebf0;
+  --text-2: #aab3c0;
+  --text-3: #6f7a89;
+  --line: #262d37;
+  --line-strong: #353e4a;
+
+  --accent: #34c99b;
+  --accent-hover: #4ad6ab;
+  --accent-text: #06201a;
+  --accent-soft: rgba(52, 201, 155, 0.14);
+  --accent-soft-text: #7fe3c3;
+
+  --danger: #ff6b6b;
+  --danger-soft: rgba(255, 107, 107, 0.14);
+  --warning: #f5a524;
+  --warning-soft: rgba(245, 165, 36, 0.14);
+  --success: #4ade80;
+  --success-soft: rgba(74, 222, 128, 0.14);
+  --info: #7aa2ff;
+  --info-soft: rgba(122, 162, 255, 0.14);
+
+  --focus: 0 0 0 3px rgba(52, 201, 155, 0.35);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 48px -12px rgba(0, 0, 0, 0.7);
+
+  color-scheme: dark;
+}
+
+/* Follows the system unless the person chose a theme (shell/theme.ts). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0f13;
+    --surface: #14181e;
+    --surface-2: #1b2129;
+    --surface-hover: #1e252e;
+    --text: #e8ebf0;
+    --text-2: #aab3c0;
+    --text-3: #6f7a89;
+    --line: #262d37;
+    --line-strong: #353e4a;
+    --accent: #34c99b;
+    --accent-hover: #4ad6ab;
+    --accent-text: #06201a;
+    --accent-soft: rgba(52, 201, 155, 0.14);
+    --accent-soft-text: #7fe3c3;
+    --danger: #ff6b6b;
+    --danger-soft: rgba(255, 107, 107, 0.14);
+    --warning: #f5a524;
+    --warning-soft: rgba(245, 165, 36, 0.14);
+    --success: #4ade80;
+    --success-soft: rgba(74, 222, 128, 0.14);
+    --info: #7aa2ff;
+    --info-soft: rgba(122, 162, 255, 0.14);
+    --focus: 0 0 0 3px rgba(52, 201, 155, 0.35);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 20px 48px -12px rgba(0, 0, 0, 0.7);
+    color-scheme: dark;
+  }
+}
