@@ -131,14 +131,45 @@ test("quotes are numbered on confirm and post nothing", async () => {
 test("types without posting rules yet refuse to confirm, writing nothing", async () => {
   const store = await freshStore();
   const { customer } = await setUp(store);
-  const bill = await store.documents.createDraft({
-    type: "bill",
+  const note = await store.documents.createDraft({
+    type: "creditNote",
     partyId: customer.id,
     issueDate: "2026-10-18",
-    lines: [{ description: "Rent", quantity: 1000, unitPrice: 50000 }],
+    lines: [{ description: "Refund", quantity: 1000, unitPrice: 50000 }],
   });
-  await expect(store.documents.confirm(bill.id)).rejects.toThrow("isn't built yet");
-  expect((await store.documents.get(bill.id))?.status).toBe("draft");
+  await expect(store.documents.confirm(note.id)).rejects.toThrow("isn't built yet");
+  expect((await store.documents.get(note.id))?.status).toBe("draft");
+});
+
+test("a confirmed bill brings stock in and owes the supplier; cancelling undoes both", async () => {
+  const store = await freshStore();
+  const { widget } = await setUp(store);
+  const supplier = await store.parties.create({ name: "Parts Ltd" });
+  const accounts = await store.settings.accountMap();
+  const draft = await store.documents.createDraft({
+    type: "bill",
+    partyId: supplier.id,
+    issueDate: "2026-10-18",
+    lines: [
+      { itemId: widget.id, quantity: 5000, unitPrice: 400 },
+      { description: "Delivery", quantity: 1000, unitPrice: 1500 },
+    ],
+  });
+  const confirmed = await store.documents.confirm(draft.id);
+  expect(confirmed).toMatchObject({ status: "confirmed", number: "BILL-000001" });
+
+  const balances = accountBalances(await store.ledger("journal"));
+  expect(balanceOf(balances, accounts.inventory)).toBe(2000);
+  expect(balanceOf(balances, accounts.purchases)).toBe(1500);
+  expect(balanceOf(balances, accounts.payables)).toBe(-3500);
+  expect(await store.items.onHand(widget.id)).toBe(5000);
+  expect(await store.ledger("stockMoves")).toMatchObject([{ quantity: 5000, unitCost: 400 }]);
+
+  await store.documents.cancel(draft.id);
+  for (const b of accountBalances(await store.ledger("journal")).values()) {
+    expect(b.debit - b.credit).toBe(0);
+  }
+  expect(await store.items.onHand(widget.id)).toBe(0);
 });
 
 test("impossible dates are refused", async () => {
