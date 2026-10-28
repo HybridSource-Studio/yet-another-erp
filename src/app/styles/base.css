@@ -1,0 +1,114 @@
+/* Resets and the few element defaults the whole app shares. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+h1 {
+  font-size: 1.5rem;
+}
+h2 {
+  font-size: 1.05rem;
+}
+h3 {
+  font-size: 0.95rem;
+}
+p {
+  margin: 0;
+}
+p + p {
+  margin-top: var(--space-3);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--surface-2);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus);
+}
+
+.muted {
+  color: var(--text-2);
+}
+.subtle {
+  color: var(--text-3);
+}
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: var(--space-2);
+  z-index: 100;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.skip-link:focus {
+  left: var(--space-2);
+}
+
+.startup-error {
+  max-width: 36rem;
+  margin: 10vh auto;
+  padding: var(--space-6);
+}
+.startup-error pre {
+  white-space: pre-wrap;
+  color: var(--text-2);
+}
