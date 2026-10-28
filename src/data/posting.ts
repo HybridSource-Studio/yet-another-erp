@@ -6,7 +6,7 @@
 // posting.test.ts. Each entry must balance; the Writer refuses one that doesn't.
 
 import { combineJournalLines, signedLine } from "./ledger";
-import { lineAmount } from "./money";
+import { lineAmount, MILLI_PER_UNIT, mulDiv } from "./money";
 import type {
   AccountRole,
   DocumentType,
@@ -17,7 +17,7 @@ import type {
   Minor,
   TradeDocument,
 } from "./schema";
-import { documentTotals } from "./totals";
+import { documentTotals, lineTotals } from "./totals";
 
 export type AccountMap = Record<AccountRole, Id>;
 
@@ -71,9 +71,47 @@ export function postInvoice(doc: TradeDocument, context: PostingContext): Postin
   return { journal: combineJournalLines(lines), stockMoves };
 }
 
+/**
+ * A bill: the supplier is owed the total; tax paid is debited; stock items enter the location at
+ * the price paid, debiting inventory; everything else (services, lines with no item) is purchases.
+ */
+export function postBill(doc: TradeDocument, context: PostingContext): Posting {
+  const { accounts, items, locationId } = context;
+  const totals = documentTotals(doc.lines);
+  const lines: JournalLine[] = [
+    signedLine(accounts.taxPaid, totals.tax),
+    signedLine(accounts.payables, -totals.total),
+  ];
+  const stockMoves: PlannedMove[] = [];
+  for (const line of doc.lines) {
+    const { net } = lineTotals(line);
+    const item = line.itemId ? items.get(line.itemId) : undefined;
+    if (!item || item.kind !== "stock") {
+      lines.push(signedLine(accounts.purchases, net));
+      continue;
+    }
+    lines.push(signedLine(accounts.inventory, net));
+    stockMoves.push({
+      itemId: item.id,
+      locationId,
+      quantity: line.quantity,
+      unitCost: unitCostOf(net, line.quantity),
+    });
+  }
+  return { journal: combineJournalLines(lines), stockMoves };
+}
+
+/** What one unit cost, after discount: net / quantity, rounded. A return has both negative. */
+function unitCostOf(net: Minor, quantity: Milli): Minor {
+  return quantity < 0
+    ? mulDiv(-net, MILLI_PER_UNIT, -quantity)
+    : mulDiv(net, MILLI_PER_UNIT, quantity);
+}
+
 /** The document types that post, and how. A type in neither list can't be confirmed yet. */
 export const POSTERS: Partial<Record<DocumentType, Poster>> = {
   invoice: postInvoice,
+  bill: postBill,
 };
 
 export function canConfirm(type: DocumentType): boolean {
